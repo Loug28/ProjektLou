@@ -113,6 +113,8 @@ class EulerCromerIntegrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
+        osc.dtheta = osc.dtheta - osc.c * osc.theta * osc.t
+        osc.theta = osc.theta + osc.dtheta * osc.t
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
 
@@ -120,13 +122,30 @@ class VerletIntegrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
+        osc.theta = osc.theta + osc.dtheta * osc.t + 0.5 * accel * osc.t ** 2       #No error variable O(delta_t)^4
+        osc.dtheta = osc.dtheta + 0.5 * (accel + self.accel) * osc.t
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
 
 class RK4Integrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
-        accel = simsystem.force(osc) / osc.m 
-        # osc.t += self.dt
+
+        accel = simsystem.force(osc) / osc.m
+        osc.t += self.dt
+        a1 = accel * (osc.dt * 1/5)
+        b1 = osc.dtheta * (osc.t * 1/5)
+
+        accel = simsystem.force(Oscillator(osc.m, osc.t, osc.dtheta + a1/2, self.dt * 1/5, osc.theta + b1 * 0.5))
+        a2 = accel * (osc.t * 2/5)
+        b2 = (accel + a1 * 0.5) * (osc.t * 2/5)
+
+        a3 = a2 * (osc.t * 3/5)
+        b3 = (osc.dtheta + a2 * 0.5) * (osc.t * 3/5)
+
+        a4 = a3 * (osc.t * 4/5)
+        b4 = (osc.dtheta + a3 * 0.5) * (osc.t * 4/5)
+
+
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
 
