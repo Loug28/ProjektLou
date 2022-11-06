@@ -36,7 +36,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=0, dtheta0=0, gamma=0):
+    def __init__(self, m=1, c=4, t0=0, theta0=(0.1 * np.pi), dtheta0=0, gamma=0):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -113,8 +113,9 @@ class EulerCromerIntegrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
-        osc.dtheta = osc.dtheta - osc.c * osc.theta * osc.t
-        osc.theta = osc.theta + osc.dtheta * osc.t
+
+        osc.dtheta = osc.dtheta - osc.c * osc.theta * osc.dt
+        osc.theta = osc.theta + osc.dtheta * osc.dt
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
 
@@ -122,8 +123,12 @@ class VerletIntegrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
-        osc.theta = osc.theta + osc.dtheta * osc.t + 0.5 * accel * osc.t ** 2       #No error variable O(delta_t)^4
-        osc.dtheta = osc.dtheta + 0.5 * (accel + self.accel) * osc.t
+        osc.theta[0] = osc.theta0
+        osc.dtheta[0] = osc.dtheta0
+
+        for i in range(osc.time - 1):
+            osc.pos[i+1] = osc.pos[i] + osc.vel[i] * osc.t + 0.5 * accel[i] * osc.dt ** 2       #No error variable O(delta_t)^4
+            osc.vel[i+1] = osc.vel[i] + 0.5 * (accel[i] + accel[i+1]) * osc.dt
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
 
@@ -132,19 +137,27 @@ class RK4Integrator(BaseIntegrator):
 
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
-        a1 = accel * (osc.dt * 1/5)
-        b1 = osc.dtheta * (osc.t * 1/5)
 
-        accel = simsystem.force(Oscillator(osc.m, osc.t, osc.dtheta + a1/2, self.dt * 1/5, osc.theta + b1 * 0.5))
-        a2 = accel * (osc.t * 2/5)
-        b2 = (accel + a1 * 0.5) * (osc.t * 2/5)
+        a1 = accel * osc.dt
+        b1 = osc.dtheta * osc.dt
 
-        a3 = a2 * (osc.t * 3/5)
-        b3 = (osc.dtheta + a2 * 0.5) * (osc.t * 3/5)
+        accel2 = simsystem.force(osc.theta + b1 * 0.5, osc.dtheta + a1 * 0.5, osc.t + osc.dt * 0.5)
+        a2 = accel2 * osc.dt
+        b2 = (osc.dtheta + a1 * 0.5) * osc.dtheta
 
-        a4 = a3 * (osc.t * 4/5)
-        b4 = (osc.dtheta + a3 * 0.5) * (osc.t * 4/5)
+        accel3 = simsystem.force(osc.theta + b2 * 0.5, osc.dtheta + a2 * 0.5, osc.t + osc.dt * 0.5)
+        a3 = accel3 * osc.dt
+        b3 = (osc.dtheta + a2 * 0.5) * osc.dt
 
+        accel4 = simsystem.force(osc.theta + b3, osc.dtheta + a3, osc.t)
+        a4 = accel4 * osc.dt
+        b4 = (osc.dtheta + a3) * osc.dt
+
+        # Forloop? osc.theta [i + 1] =
+        osc.theta = osc.theta + (1/6) * (a1 + 2 * a2 + 2 * a3 + a4)
+        osc.dtheta = osc.dtheta + (1/6) * (b1 + 2 * b2 + 2 * b3 + b4)
+
+        #         accel = simsystem.force(Oscillator(osc.m, osc.t, osc.dtheta + a1/2, self.dt * 1/5, osc.theta + b1 * 0.5)
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
@@ -234,8 +247,10 @@ class Simulation:
 
 # It's good practice to encapsulate the script execution in 
 # a function (e.g. for profiling reasons)
-def exercise_11() :
+def exercise_11():
+    Simulation()
     # TODO
+
 
 
 """
