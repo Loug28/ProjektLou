@@ -77,14 +77,14 @@ class Pendulum(BaseSystem):
 
 class BaseIntegrator:
 
-    def __init__(self, _dt=0.01) :
+    def __init__(self, _dt=0.01):
         self.dt = _dt   # time step
 
     def integrate(self, simsystem, osc, obs):
 
         """ Perform a single integration step """
         
-        self.timestep(simsystem, osc, obs)
+        self.timestep(self, simsystem, osc, obs)
 
         # Append observables to their lists
         obs.time.append(osc.t)
@@ -114,9 +114,10 @@ class EulerCromerIntegrator(BaseIntegrator):
         accel = simsystem.force(osc) / osc.m
         osc.t += self.dt
 
-        osc.dtheta = osc.dtheta - osc.c * osc.theta * osc.dt
-        osc.theta = osc.theta + osc.dtheta * osc.dt
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
+        osc.theta = osc.theta + osc.dtheta * self.dt
+        osc.dtheta = osc.dtheta - osc.c * osc.theta * self.dt
+
 
 
 class VerletIntegrator(BaseIntegrator):
@@ -141,23 +142,21 @@ class RK4Integrator(BaseIntegrator):
         a1 = accel * osc.dt
         b1 = osc.dtheta * osc.dt
 
-        accel2 = simsystem.force(osc.theta + b1 * 0.5, osc.dtheta + a1 * 0.5, osc.t + osc.dt * 0.5)
+        accel2 = simsystem.force(Oscillator(osc.m, osc.t + osc.dt * 0.5, osc.dtheta + a1 * 0.5, osc.theta + b1 * 0.5)) / osc.m
         a2 = accel2 * osc.dt
         b2 = (osc.dtheta + a1 * 0.5) * osc.dtheta
 
-        accel3 = simsystem.force(osc.theta + b2 * 0.5, osc.dtheta + a2 * 0.5, osc.t + osc.dt * 0.5)
+        accel3 = simsystem.force(Oscillator(osc.m, osc.t + osc.dt * 0.5, osc.dtheta + a2 * 0.5, osc.theta + b2 * 0.5)) / osc.m
         a3 = accel3 * osc.dt
         b3 = (osc.dtheta + a2 * 0.5) * osc.dt
 
-        accel4 = simsystem.force(osc.theta + b3, osc.dtheta + a3, osc.t)
+        accel4 = simsystem.force(Oscillator(osc.m, osc.t + osc.dt, osc.dtheta + a3, osc.theta + b3)) / osc.m # Change osc.t + osc.dt?
         a4 = accel4 * osc.dt
         b4 = (osc.dtheta + a3) * osc.dt
 
         # Forloop? osc.theta [i + 1] =
         osc.theta = osc.theta + (1/6) * (a1 + 2 * a2 + 2 * a3 + a4)
         osc.dtheta = osc.dtheta + (1/6) * (b1 + 2 * b2 + 2 * b3 + b4)
-
-        #         accel = simsystem.force(Oscillator(osc.m, osc.t, osc.dtheta + a1/2, self.dt * 1/5, osc.theta + b1 * 0.5)
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
@@ -194,7 +193,6 @@ class Simulation:
 
         for it in range(n):
             integrator.integrate(simsystem, self.oscillator, self.obs)
-
     # Run while displaying the animation of a pendulum swinging back and forth (slow-ish)
     # If too slow, try to increase stepsperframe
     def run_animate(self,
@@ -248,7 +246,11 @@ class Simulation:
 # It's good practice to encapsulate the script execution in 
 # a function (e.g. for profiling reasons)
 def exercise_11():
-    Simulation()
+    sim11 = Simulation()
+
+    sim11.run(simsystem=Pendulum(), integrator=EulerCromerIntegrator)
+    sim11.plot_observables(title = "Pendulum EulerCromer, gamma = 0")
+
     # TODO
 
 
