@@ -96,14 +96,17 @@ class Observables:
 
 # Derivate of H with respect to p1
 @nmb.jit(nopython=True)
-def dHdp1(x, m, L):
+def dHdp1(x, m, L): 
     # TODO: Write and return the formula for the derivative of H with respect to p1 here
+    return (L * x[2] - L * x[3] * np.cos(x[0]-x[1])) / (L ** 3 (m + m * np.sin(x[0]- x[1]) ** 2))
+
 
 
 # Derivate of H with respect to p2
 @nmb.jit(nopython=True)
 def dHdp2(x, m, L):
     # TODO: Write and return the formula for the derivative of H with respect to p2 here
+    return (-m * L * x[2] * np.cos(x[0] - x[1]) + (m + m) * L * x[3]) / (m * L ** 3 * (m + m * np.sin(x[0]- x[1]) ** 2))
 
 
 # Derivate of H with respect to q1
@@ -125,7 +128,7 @@ def HamiltonEquations(x, m, L):
 
 class RK4Integrator:
 
-    def __init__(self, dt=0.01):
+    def __init__(self, dt=0.003):
         self.dt = dt    # time step
         self.mult_vec = np.transpose(np.array([1,2,2,1]))
 
@@ -147,6 +150,9 @@ class RK4Integrator:
         obs.ekin.append(Ekin(osc))
         obs.etot.append(Epot(osc) + Ekin(osc))
         # TODO: Append values for the Poincare map
+        obs.p1list.append(0)
+        obs.p2list.append
+
 
 
     """
@@ -283,6 +289,8 @@ class Simulation:
  
 def exercise_15a() :
     # TODO
+
+
 
 if __name__ == "__main__" :
     exercise_15a()
