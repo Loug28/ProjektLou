@@ -36,7 +36,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=(0.1 * np.pi), dtheta0=0, gamma=0):
+    def __init__(self, m=1, c=4, t0=0, theta0=1, dtheta0=0, gamma=1.8):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -296,13 +296,25 @@ def exercise_12():
     plt.plot(theta0_12, t_perturbation)
     plt.title("Perturbation series comparision to Pendulum and Harmonic")
     plt.figlegend(('Harmonic', 'Pendulum', 'Perturbation to theta(0) ^ 6'))
-    plt.xlabel('Time')
-    plt.ylabel('Theta')
+    plt.xlabel('Position')
+    plt.ylabel('Time (s)')
     plt.show()
  
-#def exercise_13():
+def exercise_13():
     #TODO
+    sim13 = Simulation()
 
+    sim13.reset
+    sim13.run(simsystem=Harmonic(), integrator=EulerCromerIntegrator())
+    sim13.plot_observables(title = "Harmonic EulerCromer, gamma = 0.5")
+
+    sim13.reset
+    sim13.run(simsystem=Harmonic(), integrator=VerletIntegrator())
+    sim13.plot_observables(title = "Harmonic Verlet, gamma = 0.5")
+
+    sim13.reset
+    sim13.run(simsystem=Harmonic(), integrator=RK4Integrator())
+    sim13.plot_observables(title = "Harmonic RK4, gamma = 0.5")
 
 #def exercise_14():
     #TODO
@@ -322,5 +334,6 @@ def exercise_12():
 
 if __name__ == "__main__" :
     #exercise_11()
-    exercise_12()
+    #exercise_12()
+    exercise_13()
     #exercise_14()
