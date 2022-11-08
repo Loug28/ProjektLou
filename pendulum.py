@@ -126,10 +126,11 @@ class VerletIntegrator(BaseIntegrator):
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
         
-        accel1 = simsystem.force(osc) / osc.m
 
         osc.theta = osc.theta + osc.dtheta * self.dt + 0.5 * accel * self.dt ** 2
+        accel1 = simsystem.force(osc) / osc.m
         osc.dtheta = osc.dtheta + 0.5 * (accel1 + accel) * self.dt
+    
 
 
 class RK4Integrator(BaseIntegrator):
@@ -138,36 +139,37 @@ class RK4Integrator(BaseIntegrator):
         # osc.t += self.dt
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
-
-        a1 = accel * self.dt
-        b1 = osc.dtheta * self.dt
+        
         theta_temp = osc.theta
         dtheta_temp = osc.dtheta
         t_temp = osc.t
 
-        osc.theta = theta_temp + b1 * 0.5
-        osc.dtheta = dtheta_temp + a1 * 0.5
-        osc.t = t_temp + self.dt * 0.5
+        a1 = accel * self.dt
+        b1 = dtheta_temp * self.dt
+
+        osc.theta = theta_temp + (b1 * 0.5)
+        osc.dtheta = dtheta_temp + (a1 * 0.5)
+        osc.t = t_temp + (self.dt * 0.5)
 
         a2 = (simsystem.force(osc) / osc.m) * self.dt
-        b2 = (dtheta_temp + a1 * 0.5) * self.dt
+        b2 = (dtheta_temp + (a1 * 0.5)) * self.dt
 
-        osc.theta = theta_temp + b2 * 0.5
-        osc.dtheta = dtheta_temp + a2 * 0.5
-        osc.t = t_temp + self.dt * 0.5
+        osc.theta = theta_temp + (b2 * 0.5)
+        osc.dtheta = dtheta_temp + (a2 * 0.5)
 
-        a3 = (simsystem.force(osc) / osc.m) * self.dt
-        b3 = (dtheta_temp + a2 * 0.5) * self.dt
+        a3 = (simsystem.force(osc)  / osc.m) * self.dt
+        b3 = (dtheta_temp + (a2 * 0.5)) * self.dt
 
         osc.theta = theta_temp + b3
-        osc.dtheta = dtheta_temp + a1
+        osc.dtheta = dtheta_temp + a3
         osc.t = t_temp + self.dt
 
         a4 = (simsystem.force(osc) / osc.m) * self.dt
         b4 = (dtheta_temp + a3) * self.dt
 
-        osc.dtheta = dtheta_temp + ((1/6) * (b1 + 2 * b2 + 2 * b3 + b4))
-        osc.theta = theta_temp + ((1/6) * (a1 + 2 * a2 + 2 * a3 + a4))
+        osc.dtheta = dtheta_temp + ((a1 + (2 * a2) + (2 * a3) + a4) / 6)
+        osc.theta = theta_temp + ((b1 + (2 * b2) + (2 * b3) + b4) / 6)
+
 
 
 
@@ -260,9 +262,9 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.reset()
-    sim11.run(simsystem=Pendulum(), integrator=RK4Integrator(0.2))
-    sim11.plot_observables(title = "Pendulum, gamma = 0")
+    sim11.run(simsystem=Pendulum(), integrator=VerletIntegrator())
+    sim11.plot_observables(title = "Pendulum Verlet, gamma = 0")
+
 
 def exercise_12():
     T = 2 * np.pi * sqrt(Oscillator.L / G) * (1 + 1/16 * Oscillator.theta ** 2 + 11/3072 * Oscillator.theta ** 4 + 173/737280 * Oscillator.theta ** 6)
