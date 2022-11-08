@@ -212,7 +212,7 @@ class Simulation:
             simsystem,
             integrator,
             tmax=30.,               # final time
-            stepsperframe=1         # how many integration steps between visualising frames
+            stepsperframe=5         # how many integration steps between visualising frames
             ):
 
         numframes = int(tmax / (stepsperframe * integrator.dt))-2
@@ -262,15 +262,51 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.run(simsystem=Pendulum(), integrator=VerletIntegrator())
-    sim11.plot_observables(title = "Pendulum Verlet, gamma = 0")
+    sim11.reset
+    sim11.run(simsystem=Pendulum(), integrator=RK4Integrator())
+    sim11.plot_observables(title = "Pendulum RK4, gamma = 0")
 
 
 def exercise_12():
-    T = 2 * np.pi * sqrt(Oscillator.L / G) * (1 + 1/16 * Oscillator.theta ** 2 + 11/3072 * Oscillator.theta ** 4 + 173/737280 * Oscillator.theta ** 6)
-    sim12 = Simulation()
+    t_pendulum = []
+    t_harmonic = []
+    t_perturbation = []
 
-    sim12.reset()
+    theta0_12 = np.linspace(0.1 * np.pi, 0.5 * np.pi, 1500)
+
+    integrator = VerletIntegrator() #The best one, Energyconserving and mor accurate than EulerCromer
+
+    for i in theta0_12:
+        osc_12 = Oscillator(theta0=i)
+        obs_12 = Observables()
+
+        while np.sign(osc_12.theta) == 1:
+            integrator.integrate(simsystem=Harmonic(), osc=osc_12, obs=obs_12)
+        t_harmonic.append(osc_12.t)
+
+        while np.sign(osc_12.theta) == 1:
+            integrator.integrate(simsystem=Pendulum(), osc=osc_12, obs=obs_12)
+        t_pendulum.append(osc_12.t)
+
+        t_perturbation.append(2 * np.pi * np.sqrt(osc_12.L / G) * (1 + (1/16 * i ** 2) + (11/3072 * i ** 4) + (173/737280 * i ** 6)))
+
+    plt.figure()
+    plt.plot(theta0_12, t_harmonic)
+    plt.plot(theta0_12, t_pendulum)
+    plt.plot(theta0_12, t_perturbation)
+    plt.title("Perturbation series comparision to Pendulum and Harmonic")
+    plt.figlegend(('Harmonic', 'Pendulum', 'Perturbation to theta(0) ^ 6'))
+    plt.xlabel('Time')
+    plt.ylabel('Theta')
+    plt.show()
+ 
+#def exercise_13():
+    #TODO
+
+
+#def exercise_14():
+    #TODO
+
 
 
     """ 
@@ -285,6 +321,6 @@ def exercise_12():
     """
 
 if __name__ == "__main__" :
-    exercise_11()
-    # exercise_12()
-    # ...
+    #exercise_11()
+    exercise_12()
+    #exercise_14()
