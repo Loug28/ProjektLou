@@ -36,7 +36,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=(0.5 * np.pi), dtheta0=0, gamma=0):
+    def __init__(self, m=1, c=4, t0=0, theta0=(0.1 * np.pi), dtheta0=0, gamma=0):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -126,7 +126,7 @@ class VerletIntegrator(BaseIntegrator):
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
         
-        accel1 = simsystem.force(Oscillator(osc.m, osc.c, osc.t + self.dt, osc.theta, osc.dtheta, osc.gamma)) / osc.m
+        accel1 = simsystem.force(osc) / osc.m
 
         osc.theta = osc.theta + osc.dtheta * self.dt + 0.5 * accel * self.dt ** 2
         osc.dtheta = osc.dtheta + 0.5 * (accel1 + accel) * self.dt
@@ -135,27 +135,40 @@ class VerletIntegrator(BaseIntegrator):
 class RK4Integrator(BaseIntegrator):
     def timestep(self, simsystem, osc, obs):
         accel = simsystem.force(osc) / osc.m 
-        osc.t += self.dt
+        # osc.t += self.dt
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
 
         a1 = accel * self.dt
         b1 = osc.dtheta * self.dt
+        theta_temp = osc.theta
+        dtheta_temp = osc.dtheta
+        t_temp = osc.t
 
-        accel2 = simsystem.force(Oscillator(osc.m, osc.c, osc.t + self.dt * 0.5, osc.theta + b1 * 0.5, osc.dtheta + a1 * 0.5, osc.gamma)) / osc.m
-        a2 = accel2 * self.dt
-        b2 = (osc.dtheta + a1 * 0.5) * self.dt
+        osc.theta = theta_temp + b1 * 0.5
+        osc.dtheta = dtheta_temp + a1 * 0.5
+        osc.t = t_temp + self.dt * 0.5
 
-        accel3 = simsystem.force(Oscillator(osc.m, osc.c, osc.t + self.dt * 0.5, osc.theta + b2 * 0.5, osc.dtheta + a2 * 0.5, osc.gamma)) / osc.m
-        a3 = accel3 * self.dt
-        b3 = (osc.dtheta + a2 * 0.5) * self.dt
+        a2 = (simsystem.force(osc) / osc.m) * self.dt
+        b2 = (dtheta_temp + a1 * 0.5) * self.dt
 
-        accel4 = simsystem.force(Oscillator(osc.m, osc.c, osc.t + self.dt, osc.theta + b3, osc.dtheta + a3, osc.gamma)) / osc.m
-        a4 = accel4 * self.dt
-        b4 = (osc.dtheta + a3) * self.dt
+        osc.theta = theta_temp + b2 * 0.5
+        osc.dtheta = dtheta_temp + a2 * 0.5
+        osc.t = t_temp + self.dt * 0.5
 
-        osc.theta = osc.theta + (1/6) * (a1 + 2 * a2 + 2 * a3 + a4)
-        osc.dtheta = osc.dtheta + (1/6) * (b1 + 2 * b2 + 2 * b3 + b4)
+        a3 = (simsystem.force(osc) / osc.m) * self.dt
+        b3 = (dtheta_temp + a2 * 0.5) * self.dt
+
+        osc.theta = theta_temp + b3
+        osc.dtheta = dtheta_temp + a1
+        osc.t = t_temp + self.dt
+
+        a4 = (simsystem.force(osc) / osc.m) * self.dt
+        b4 = (dtheta_temp + a3) * self.dt
+
+        osc.dtheta = dtheta_temp + ((1/6) * (b1 + 2 * b2 + 2 * b3 + b4))
+        osc.theta = theta_temp + ((1/6) * (a1 + 2 * a2 + 2 * a3 + a4))
+
 
 
 # Animation function which integrates a few steps and return a line for the pendulum
@@ -247,8 +260,15 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.run(simsystem=Harmonic(), integrator=EulerCromerIntegrator(0.01))
-    sim11.plot_observables(title = "Harmonic, gamma = 0")
+    sim11.reset()
+    sim11.run(simsystem=Pendulum(), integrator=RK4Integrator(0.2))
+    sim11.plot_observables(title = "Pendulum, gamma = 0")
+
+def exercise_12():
+    T = 2 * np.pi * sqrt(Oscillator.L / G) * (1 + 1/16 * Oscillator.theta ** 2 + 11/3072 * Oscillator.theta ** 4 + 173/737280 * Oscillator.theta ** 6)
+    sim12 = Simulation()
+
+    sim12.reset()
 
 
     """ 
