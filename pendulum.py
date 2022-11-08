@@ -36,7 +36,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=(0.1 * np.pi), dtheta0=0, gamma=0):
+    def __init__(self, m=1, c=4, t0=0, theta0=(0.5 * np.pi), dtheta0=0, gamma=0):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -247,8 +247,8 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.run(simsystem=Pendulum(), integrator=RK4Integrator(0.01))
-    sim11.plot_observables(title = "Pendulum, gamma = 0")
+    sim11.run(simsystem=Harmonic(), integrator=EulerCromerIntegrator(0.01))
+    sim11.plot_observables(title = "Harmonic, gamma = 0")
 
 
     """ 
