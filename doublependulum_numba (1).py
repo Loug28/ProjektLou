@@ -294,9 +294,33 @@ def exercise_15a() :
     sim15a.run_animate(integrator=RK4Integrator())
     sim15a.plot_observables()
 
+def  exercise_15b() :
+    obs15b = Observables()
+    sim15b = Simulation()
+
+    sim15b.run(integrator=RK4Integrator())
+
+    xvalues, yvalues = np.meshgrid(np.arange(-5, 5, 0.1), np.arange(-5, 5, 0.1))
+    print (len(xvalues))
+    print (len(yvalues))
+
+    p1array = np.array(sim15b.obs.p1list)
+    p1array = p1array.reshape(100,100)
+    q1array = np.array(sim15b.obs.q1list)
+    q1array = q1array.reshape(100,100)
+
+    plt.streamplot(xvalues, yvalues, np.asarray(sim15b.obs.q1list), p1array)
+    plt.figure()
+    plt.title('phase diagram')
+    plt.xlabel('q1')
+    plt.ylabel('p1')
+    plt.show()
+    
+    
+
 
 
 if __name__ == "__main__" :
-    exercise_15a()
-    # exercise_15b()
+    #exercise_15a()
+    exercise_15b()
     # ...

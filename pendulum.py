@@ -312,7 +312,7 @@ def exercise_14():
 
     xvalues, yvalues = meshgrid(arange(-6, 6, 0.1), arange(-6, 6, 0.1))
     thetadot = yvalues
-    dthetadot = - G / osc14.L * sin(xvalues)
+    dthetadot = - G / osc14.L * np.sin(xvalues)
     streamplot(xvalues, yvalues, thetadot, dthetadot)
     plt.title("Phase space portrait of the position and velocity")
     plt.xlabel('Position')
@@ -332,7 +332,7 @@ def exercise_14():
     """
 
 if __name__ == "__main__" :
-    exercise_11()
+    #exercise_11()
     #exercise_12()
     #exercise_13()
-    #exercise_14()
+    exercise_14()
