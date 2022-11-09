@@ -5,6 +5,7 @@
 
 from matplotlib import animation
 from pylab import *
+import copy
 
 """
     This script defines all the classes needed to simulate (and animate) a single pendulum.
@@ -36,7 +37,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=1, dtheta0=0, gamma=3):
+    def __init__(self, m=1, c=4, t0=0, theta0=0.1 * np.pi, dtheta0=0, gamma=0):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -77,7 +78,7 @@ class Pendulum(BaseSystem):
 
 class BaseIntegrator:
 
-    def __init__(self, _dt=0.01) :
+    def __init__(self, _dt=0.2) :
         self.dt = _dt   # time step
 
     def integrate(self, simsystem, osc, obs):
@@ -125,7 +126,6 @@ class VerletIntegrator(BaseIntegrator):
         osc.t += self.dt
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
-        
 
         osc.theta = osc.theta + osc.dtheta * self.dt + 0.5 * accel * self.dt ** 2
         accel1 = simsystem.force(osc) / osc.m
@@ -140,9 +140,9 @@ class RK4Integrator(BaseIntegrator):
 
         # TODO: Implement the integration here, updating osc.theta and osc.dtheta
         
-        theta_temp = osc.theta
-        dtheta_temp = osc.dtheta
-        t_temp = osc.t
+        theta_temp = copy.deepcopy(osc.theta)
+        dtheta_temp = copy.deepcopy(osc.dtheta)
+        t_temp = copy.deepcopy(osc.t)
 
         a1 = accel * self.dt
         b1 = dtheta_temp * self.dt
@@ -262,9 +262,8 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.reset
-    sim11.run(simsystem=Pendulum(), integrator=RK4Integrator())
-    sim11.plot_observables(title = "Pendulum RK4, gamma = 0")
+    sim11.run(simsystem=Pendulum(), integrator=VerletIntegrator())
+    sim11.plot_observables(title = "Pendulum Verlet, gamma = 0")
 
 
 def exercise_12():
@@ -304,19 +303,21 @@ def exercise_13():
     #TODO
     sim13 = Simulation()
 
-    sim13.reset
     sim13.run(simsystem=Harmonic(), integrator=VerletIntegrator())
     sim13.plot_observables(title = "Harmonic Verlet, gamma = 3")
 
 def exercise_14():
     #TODO
-    sim14 = Simulation()
+    osc14 = Oscillator()
 
-    sim14.reset
-    sim14.run(simsystem=Pendulum(), integrator=VerletIntegrator())
-    sim14.plot_observables(title = "Pendulum Verlet, gamma = 1")
-
-
+    xvalues, yvalues = meshgrid(arange(-6, 6, 0.1), arange(-6, 6, 0.1))
+    thetadot = yvalues
+    dthetadot = - G / osc14.L * sin(xvalues)
+    streamplot(xvalues, yvalues, thetadot, dthetadot)
+    plt.title("Phase space portrait of the position and velocity")
+    plt.xlabel('Position')
+    plt.ylabel('Velocity')
+    plt.show()
 
 
     """ 
@@ -331,7 +332,7 @@ def exercise_14():
     """
 
 if __name__ == "__main__" :
-    #exercise_11()
+    exercise_11()
     #exercise_12()
-    exercise_13()
+    #exercise_13()
     #exercise_14()

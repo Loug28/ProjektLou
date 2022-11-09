@@ -98,15 +98,13 @@ class Observables:
 @nmb.jit(nopython=True)
 def dHdp1(x, m, L): 
     # TODO: Write and return the formula for the derivative of H with respect to p1 here
-    return (L * x[2] - L * x[3] * np.cos(x[0]-x[1])) / (L ** 3 (m + m * np.sin(x[0]- x[1]) ** 2))
-
-
+    return ((L * x[2] - L * x[3] * np.cos(x[0] - x[1])) / (L ** 3 * (m + m * np.sin(x[0]- x[1]) ** 2)))
 
 # Derivate of H with respect to p2
 @nmb.jit(nopython=True)
 def dHdp2(x, m, L):
     # TODO: Write and return the formula for the derivative of H with respect to p2 here
-    return (-m * L * x[2] * np.cos(x[0] - x[1]) + (m + m) * L * x[3]) / (m * L ** 3 * (m + m * np.sin(x[0]- x[1]) ** 2))
+    return ((-m * L * x[2] * np.cos(x[0] - x[1]) + (m + m) * L * x[3]) / (m * L ** 3 * (m + m * np.sin(x[0] - x[1]) ** 2)))
 
 
 # Derivate of H with respect to q1
@@ -150,8 +148,9 @@ class RK4Integrator:
         obs.ekin.append(Ekin(osc))
         obs.etot.append(Epot(osc) + Ekin(osc))
         # TODO: Append values for the Poincare map
-        obs.p1list.append(0)
-        obs.p2list.append
+        obs.poincare_q1.append(osc.x[0])
+        obs.poincare_p1.append(osc.x[2])
+        
 
 
 
@@ -246,10 +245,10 @@ class Simulation:
                                        frames=numframes, interval=25, blit=True, repeat=False)
         
         # If you experience problems visualizing the animation try to comment/uncomment this line 
-        # plt.show()
+        plt.show()
 
         # If you experience problems visualizing the animation try to comment/uncomment this line 
-        plt.waitforbuttonpress(10)
+        #plt.waitforbuttonpress(10)
 
     # Plot coordinates and energies (to be called after running)
     def plot_observables(self, title="Double pendulum") :
@@ -289,6 +288,11 @@ class Simulation:
  
 def exercise_15a() :
     # TODO
+    sim15a = Simulation()
+
+    sim15a.reset()
+    sim15a.run_animate(integrator=RK4Integrator())
+    sim15a.plot_observables()
 
 
 
