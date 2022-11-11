@@ -321,6 +321,6 @@ def  exercise_15b() :
 
 
 if __name__ == "__main__" :
-    #exercise_15a()
-    exercise_15b()
+    exercise_15a()
+    #exercise_15b()
     # ...
