@@ -332,7 +332,7 @@ def exercise_14():
     """
 
 if __name__ == "__main__" :
-    #exercise_11()
+    exercise_11()
     #exercise_12()
     #exercise_13()
-    exercise_14()
+    #exercise_14()
