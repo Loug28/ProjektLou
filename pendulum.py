@@ -270,7 +270,7 @@ def exercise_12():
     t_pendulum = []
     t_harmonic = []
     t_pertubation = []
-    theta0_12 = np.linspace(0.1*np.pi, 0.5*np.pi, 10000)
+    theta0_12 = np.linspace(0.1*np.pi, 0.9*np.pi, 1500)
 
     integrator = VerletIntegrator()
 
@@ -280,10 +280,11 @@ def exercise_12():
 
         while np.sign(osc12.theta)==1:
             integrator.integrate(simsystem=Harmonic(), osc=osc12, obs=obs12)
-        t_harmonic.append(osc12.t * 4)
+        t_harmonic.append(osc12.t*4)
 
 
         osc12_P = Oscillator(theta0=i)
+
         while np.sign(osc12_P.theta)==1:
             integrator.integrate(simsystem=Pendulum(), osc=osc12_P, obs=obs12)
         t_pendulum.append(osc12_P.t*4)
@@ -301,36 +302,6 @@ def exercise_12():
     plt.show()
 
 
-    '''
-    integrator = VerletIntegrator() #The best one, Energynconserving and more accurate than EulerCromer
-    theta0_vec = np.linspace(0.1 * np.pi, 0.5 * np.pi, 1500)
-    tau_harmonic, tau_pendulum, tau_perturbation = [], [], []
-
-    
-    for i in theta0_vec:
-        oscillator = Oscillator(theta0=i)
-        observer = Observables()
-
-        while np.sign(oscillator.theta) == 1:
-            integrator.integrate(simsystem = Harmonic(), osc=oscillator, obs=observer)
-        tau_harmonic.append(oscillator.t)
-
-        while np.sign(oscillator.theta) == 1:
-            integrator.integrate(simsystem=Pendulum(), osc=oscillator, obs=observer)
-        tau_pendulum.append(oscillator.t)
-
-        
-
-    plt.figure()
-    plt.plot(theta0_vec, tau_harmonic)
-    plt.plot(theta0_vec, tau_pendulum)
-    plt.plot(theta0_vec, tau_perturbation)
-    plt.title("Perturbation series comparision to Pendulum and Harmonic")
-    plt.figlegend(('Pendulum', 'Harmonic', 'Perturbation to theta(0) ^ 6'))
-    plt.xlabel('Position')
-    plt.ylabel('Time (s)')
-    plt.show()
-    '''
  
 def exercise_13():
     #TODO
