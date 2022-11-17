@@ -78,7 +78,7 @@ class Pendulum(BaseSystem):
 
 class BaseIntegrator:
 
-    def __init__(self, _dt=0.2) :
+    def __init__(self, _dt=0.01) :
         self.dt = _dt   # time step
 
     def integrate(self, simsystem, osc, obs):
@@ -269,35 +269,68 @@ def exercise_11() :
 def exercise_12():
     t_pendulum = []
     t_harmonic = []
-    t_perturbation = []
+    t_pertubation = []
+    theta0_12 = np.linspace(0.1*np.pi, 0.5*np.pi, 10000)
 
-    theta0_12 = np.linspace(0.1 * np.pi, 0.5 * np.pi, 1500)
-
-    integrator = VerletIntegrator() #The best one, Energyconserving and mor accurate than EulerCromer
+    integrator = VerletIntegrator()
 
     for i in theta0_12:
-        osc_12 = Oscillator(theta0=i)
-        obs_12 = Observables()
+        osc12 = Oscillator(theta0=i)
+        obs12 = Observables()
 
-        while np.sign(osc_12.theta) == 1:
-            integrator.integrate(simsystem=Harmonic(), osc=osc_12, obs=obs_12)
-        t_harmonic.append(osc_12.t)
+        while np.sign(osc12.theta)==1:
+            integrator.integrate(simsystem=Harmonic(), osc=osc12, obs=obs12)
+        t_harmonic.append(osc12.t * 4)
 
-        while np.sign(osc_12.theta) == 1:
-            integrator.integrate(simsystem=Pendulum(), osc=osc_12, obs=obs_12)
-        t_pendulum.append(osc_12.t)
 
-        t_perturbation.append(2 * np.pi * np.sqrt(osc_12.L / G) * (1 + (1/16 * i ** 2) + (11/3072 * i ** 4) + (173/737280 * i ** 6)))
+        osc12_P = Oscillator(theta0=i)
+        while np.sign(osc12_P.theta)==1:
+            integrator.integrate(simsystem=Pendulum(), osc=osc12_P, obs=obs12)
+        t_pendulum.append(osc12_P.t*4)
+
+        t_pertubation.append(2 * np.pi * np.sqrt(osc12.L / G) * (1 + (1/16 * i ** 2) + (11/3072 * i ** 4) + (173/737280 * i ** 6)))
 
     plt.figure()
-    plt.plot(theta0_12, t_harmonic)
     plt.plot(theta0_12, t_pendulum)
-    plt.plot(theta0_12, t_perturbation)
+    plt.plot(theta0_12, t_harmonic)
+    plt.plot(theta0_12, t_pertubation)
     plt.title("Perturbation series comparision to Pendulum and Harmonic")
-    plt.figlegend(('Harmonic', 'Pendulum', 'Perturbation to theta(0) ^ 6'))
+    plt.figlegend(('Pendulum', 'Harmonic', 'Perturbation to theta(0) ^ 6'))
     plt.xlabel('Position')
     plt.ylabel('Time (s)')
     plt.show()
+
+
+    '''
+    integrator = VerletIntegrator() #The best one, Energynconserving and more accurate than EulerCromer
+    theta0_vec = np.linspace(0.1 * np.pi, 0.5 * np.pi, 1500)
+    tau_harmonic, tau_pendulum, tau_perturbation = [], [], []
+
+    
+    for i in theta0_vec:
+        oscillator = Oscillator(theta0=i)
+        observer = Observables()
+
+        while np.sign(oscillator.theta) == 1:
+            integrator.integrate(simsystem = Harmonic(), osc=oscillator, obs=observer)
+        tau_harmonic.append(oscillator.t)
+
+        while np.sign(oscillator.theta) == 1:
+            integrator.integrate(simsystem=Pendulum(), osc=oscillator, obs=observer)
+        tau_pendulum.append(oscillator.t)
+
+        
+
+    plt.figure()
+    plt.plot(theta0_vec, tau_harmonic)
+    plt.plot(theta0_vec, tau_pendulum)
+    plt.plot(theta0_vec, tau_perturbation)
+    plt.title("Perturbation series comparision to Pendulum and Harmonic")
+    plt.figlegend(('Pendulum', 'Harmonic', 'Perturbation to theta(0) ^ 6'))
+    plt.xlabel('Position')
+    plt.ylabel('Time (s)')
+    plt.show()
+    '''
  
 def exercise_13():
     #TODO
@@ -309,11 +342,24 @@ def exercise_13():
 def exercise_14():
     #TODO
     osc14 = Oscillator()
+    sim14 = Simulation()
+    obs14 = Observables()
+    integrate = VerletIntegrator()
+    
+    time14 = []
+    theta14 = []
+    dtheta14 = []
+    
+    
+    while osc14.t < 30:
+        theta14.append(osc14.theta)
+        dtheta14.append(osc14.dtheta)
+        time14.append(osc14.t)
+        integrate.integrate(simsystem=Pendulum(), osc=osc14, obs=obs14)
+      
+    plt.figure()
+    plt.plot(dtheta14, theta14)
 
-    xvalues, yvalues = meshgrid(arange(-6, 6, 0.1), arange(-6, 6, 0.1))
-    thetadot = yvalues
-    dthetadot = - G / osc14.L * np.sin(xvalues)
-    streamplot(xvalues, yvalues, thetadot, dthetadot)
     plt.title("Phase space portrait of the position and velocity")
     plt.xlabel('Position')
     plt.ylabel('Velocity')
@@ -332,7 +378,7 @@ def exercise_14():
     """
 
 if __name__ == "__main__" :
-    exercise_11()
-    #exercise_12()
+    #exercise_11()
+    exercise_12()
     #exercise_13()
     #exercise_14()
