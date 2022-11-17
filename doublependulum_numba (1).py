@@ -148,10 +148,10 @@ class RK4Integrator:
         obs.ekin.append(Ekin(osc))
         obs.etot.append(Epot(osc) + Ekin(osc))
         # TODO: Append values for the Poincare map
-        obs.poincare_q1.append(osc.x[0])
-        obs.poincare_p1.append(osc.x[2])
-        
 
+        if osc.x[3] > 0 and abs(osc.x[1]) < 0.01:
+            obs.poincare_q1.append(osc.x[0])
+            obs.poincare_p1.append(osc.x[2])
 
 
     """
@@ -183,6 +183,8 @@ class RK4Integrator:
         ab[:,3] = dt*HamiltonEquations(x+ab[:,2],m,L)
 
         osc.x += np.matmul(ab,self.mult_vec) / 6.0
+
+
 
 
 # Animation function which integrates a few steps and return a line for the pendulum
@@ -222,7 +224,7 @@ class Simulation:
 
     def run_animate(self,
             integrator,
-            tmax=30.,           # final time
+            tmax=20.,           # final time
             stepsperframe=5,    # how many integration steps between visualising frames
             outfile='energy1.pdf'
             ):
@@ -294,33 +296,14 @@ def exercise_15a() :
     sim15a.run_animate(integrator=RK4Integrator())
     sim15a.plot_observables()
 
-def  exercise_15b() :
-    obs15b = Observables()
+def exercise_15b() :
     sim15b = Simulation()
+    sim15b.reset()
 
     sim15b.run(integrator=RK4Integrator())
 
-    xvalues, yvalues = np.meshgrid(np.arange(-5, 5, 0.1), np.arange(-5, 5, 0.1))
-    print (len(xvalues))
-    print (len(yvalues))
-
-    p1array = np.array(sim15b.obs.p1list)
-    p1array = p1array.reshape(100,100)
-    q1array = np.array(sim15b.obs.q1list)
-    q1array = q1array.reshape(100,100)
-
-    plt.streamplot(xvalues, yvalues, np.asarray(sim15b.obs.q1list), p1array)
-    plt.figure()
-    plt.title('phase diagram')
-    plt.xlabel('q1')
-    plt.ylabel('p1')
-    plt.show()
-    
-    
-
-
 
 if __name__ == "__main__" :
-    exercise_15a()
-    #exercise_15b()
-    # ...
+    #exercise_15a()
+    exercise_15b()
+    #exercise_15c()

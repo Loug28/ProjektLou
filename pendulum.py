@@ -332,8 +332,8 @@ def exercise_14():
     plt.plot(dtheta14, theta14)
 
     plt.title("Phase space portrait of the position and velocity")
-    plt.xlabel('Position')
-    plt.ylabel('Velocity')
+    plt.xlabel('Velocity')
+    plt.ylabel('Position')
     plt.show()
 
 
