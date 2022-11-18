@@ -37,7 +37,7 @@ class Oscillator:
 
     """ Class for a general, simple oscillator """
 
-    def __init__(self, m=1, c=4, t0=0, theta0=0.1 * np.pi, dtheta0=0, gamma=0):
+    def __init__(self, m=1, c=4, t0=0, theta0=np.pi/2, dtheta0=0, gamma=1):
         self.m = m              # mass of the pendulum bob
         self.c = c              # c = g/L
         self.L = G / c          # string length
@@ -198,7 +198,7 @@ class Simulation:
     def run(self,
             simsystem,
             integrator,
-            tmax=30.,               # final time
+            tmax=300.,               # final time
             ):
 
         n = int(tmax / integrator.dt)
@@ -262,15 +262,15 @@ def exercise_11() :
     # TODO
     sim11 = Simulation()
 
-    sim11.run(simsystem=Pendulum(), integrator=VerletIntegrator())
-    sim11.plot_observables(title = "Pendulum Verlet, gamma = 0")
+    sim11.run(simsystem=Harmonic(), integrator=RK4Integrator())
+    sim11.plot_observables(title = "Harmonic RK4, gamma = 0")
 
 
 def exercise_12():
     t_pendulum = []
     t_harmonic = []
     t_pertubation = []
-    theta0_12 = np.linspace(0.1*np.pi, 0.9*np.pi, 1500)
+    theta0_12 = np.linspace(0.1*np.pi, 0.9*np.pi, 10000)
 
     integrator = VerletIntegrator()
 
@@ -350,6 +350,6 @@ def exercise_14():
 
 if __name__ == "__main__" :
     #exercise_11()
-    exercise_12()
+    #exercise_12()
     #exercise_13()
-    #exercise_14()
+    exercise_14()
