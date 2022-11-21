@@ -325,7 +325,7 @@ def Exercise_e():
 
                 summedSquares = 0
                 for sims in range(0, yval):
-                    (Xv, Yv, indices), stepsRun = runUntilWorks(
+                    (Xv, Yv, index), stepsRun = runUntilWorks(
                         xval, canIntersect, preventBackfire)
                     r = (Xv[0]-Xv[-1])**2 + (Yv[0]-Yv[-1])**2
                     summedSquares += r / yval
@@ -345,10 +345,8 @@ def Exercise_e():
 
         plt.figure()
         plt.title("Distance comparison")
-        plt.plot(length, R2_intersecting,
-                color = 'tab:blue',label = "Intersecting")
-        plt.plot(length, R2_non_intersecting,
-                color = 'tab:cyan',label = "Non-intersecting")
+        plt.plot(length, R2_intersecting,label = "Intersecting")
+        plt.plot(length, R2_non_intersecting,label = "Non-intersecting")
         plt.xlabel('N (Steps)', fontsize = 12)
         plt.ylabel('$\sqrt{⟨R^2⟩}$', fontsize = 12)
         plt.legend()
@@ -364,7 +362,6 @@ def Exercise_e():
         plt.ylabel('$ln(\sqrt{⟨R^2⟩})$')
         plt.legend() 
         plt.show()
-
 
     visualize() 
 
