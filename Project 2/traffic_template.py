@@ -39,6 +39,7 @@ class Cars:
             self.c.append(i)        # the color of the cars (for drawing)
 
     def distance(self, i):
+        
         # TODO: Implement the function returning the PERIODIC distance 
         # between car i and the one in front 
 
@@ -101,6 +102,14 @@ class MyPropagator(BasePropagator) :
 
     def timestep(self, cars, obs):
         # TODO Here you should implement the car behaviour rules
+        for i in len(cars.v):
+            if cars.v[i] < self.vmax:
+                cars.v[i] = cars.v[i] + 1
+            if cars.v[i] >= cars.distance(i):
+                cars.v[i] = cars.distance(i) - 1
+            if cars.v[i] > 0:
+
+
 
 ############################################################################################
 
@@ -198,7 +207,7 @@ def main() :
     simulation = Simulation(cars)
 
     # simulation.run_animate(propagator=ConstantPropagator())
-    simulation.run_animate(propagator=MyPropagator(vmax=2, p=0.2))
+    simulation.run_animate(propagator=MyPropagator(vmax=2, p=0.5))
 
 
 # Calling 'main()' if the script is executed.
