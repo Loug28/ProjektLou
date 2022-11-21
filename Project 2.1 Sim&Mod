@@ -42,7 +42,7 @@ def Exercise_b():
     y_number = 0
     nr_steps = 1000
 
-    r0 = 2
+    r0 = 1
     a = 3
     c = 4
     m = 128
@@ -76,8 +76,184 @@ def Exercise_b():
     plt.plot(x_steps, y_steps)
     plt.show()
 
+def Exercise_c():
+
+    def xy_values(N=1000):
+        x_steps_c, y_steps_c = [0], [0]  # Initial position
+        for i in range(1, N):
+            step = int(np.random.rand() * 4)
+            x_steps_c.append(x_steps_c[i - 1])
+            y_steps_c.append(y_steps_c[i - 1])
+
+            if step == 0:
+                x_steps_c[i] += 1
+            elif step == 1:
+                x_steps_c[i] -= 1
+            elif step == 2:
+                y_steps_c[i] += 1
+            elif step == 3:
+                y_steps_c[i] -= 1
+            else:
+                raise Exception('Something is wrong')
+
+        return x_steps_c, y_steps_c
+
+    RMSqrt = []
+    RMSqrtFluct = []
+    mean = []
+    StErEst = []
+    nr_steps = 1000
+    N = np.arange(1, 1002, 50)
+
+    for n in N:
+        distance = []
+        sumR_2 = 0
+        sumsqrt = 0
+        for i in range(nr_steps):
+            x_steps_c, y_steps_c = xy_values(n)
+            R2 = x_steps_c[-1] ** 2 + y_steps_c[-1] ** 2
+            sumR_2 += R2
+            sumsqrt += np.sqrt(R2)
+            distance.append(np.sqrt(R2))
+
+        RMSqrt.append(np.sqrt(sumR_2 / nr_steps))
+        mean.append(sumR_2 / nr_steps)
+        RMSqrtFluct.append(np.sqrt((((sumR_2 / nr_steps) - (sumsqrt / nr_steps) ** 2) * nr_steps) / (nr_steps - 1)))
+        StErEst.append(np.std(distance, ddof=1)/ np.sqrt(np.size(distance)))
+
+    print(N[-1])
+
+    plt.figure()
+    plt.title('Comparision of random walks')
+    plt.plot(N, RMSqrt, label='$\sqrt{<R^2>}$')
+    plt.plot(N, RMSqrtFluct, label="Root-mean-square fluctuation")
+    plt.plot(N, StErEst, label="Standare error estimate")
+    plt.xlabel('Steps')
+    plt.ylabel('End-to-end distance')
+    plt.legend()
+    plt.show()
+
+    plt.figure()
+    plt.title('Length dependence on N')
+    plt.plot(N, mean)
+    plt.xlabel('Steps')
+    plt.ylabel('Length $⟨R^2⟩$')
+    plt.show()
+
+    plt.figure()
+    plt.title('Standard error estimate')
+    plt.plot(N, StErEst)
+    plt.xlabel('Steps')
+    plt.ylabel('Standard error')
+    plt.show()
+
+def Exercise_d():
+    def runRandomWalk(steps, not_backfire):
+        x_steps_d = []
+        y_steps_d = []
+
+        x_value = 0
+        y_value = 0
+        index = []
+        
+        value = int(np.random.rand() * 4)
+
+        def intersectsSelf():
+            for i in range(len(x_steps_d)):
+                if x_steps_d[i] == x_value and y_steps_d[i] == y_value:
+                    return True
+            return False
+
+        def step():
+            nonlocal x_value, y_value
+
+            if value == 0:
+                x_value += 1
+
+            if value == 1:
+                y_value += 1
+
+            if value == 2:
+                x_value -= 1
+
+            if value == 3:
+                y_value -= 1
+
+        for i in range(steps):
+            step()
+            if intersectsSelf():
+                return None
+
+            if not_backfire:
+                newDir = int(np.random.rand() * 3)
+                value = (value - 2 + newDir) % 4
+            else:
+                value = int(np.random.rand() * 4)
+
+            x_steps_d.append(x_value)
+            y_steps_d.append(y_value)
+            index.append(i)
+
+        return x_steps_d, y_steps_d, np.array(index)
+
+
+    def runUntilWorks(steps, not_backfire):
+        stepsRun = 1
+        while True:
+            val = runRandomWalk(steps, not_backfire)
+            if val != None:
+                return val, stepsRun
+            stepsRun += 1
+
+    for i in range(5, 55, 5):
+        plt.figure()
+        plt.title("{0} non-intersecting steps".format(i))
+        (X, Y, indices), stepsRun = runUntilWorks(i, True)
+        plt.plot(X, Y)
+        plt.show()
+
+
+    def means(start, end, step, not_backfire):
+        index = []
+        means = []
+        attempts = []
+        for i in range(start, end, step):
+            N = 50
+            runWalks = 0
+            for n in range(N):
+                _, stepsRun = runUntilWorks(i, not_backfire)
+                runWalks += stepsRun
+            index.append(i)
+            means.append(N / runWalks)
+            attempts.append(runWalks / N)
+
+        return index, means, attempts
+
+
+    index1, means1, counts1 = means(1, 50, 1, True)
+    index2, means2, counts2 = means(1, 25, 1, False)
+
+    plt.figure()
+    plt.title("Success")
+    plt.plot(index1, means1)
+    plt.plot(index2, means2)
+    plt.figlegend(("Improved", "Original"))
+    plt.xlabel("Steps")
+    plt.ylabel("Success ratio")
+    plt.show()
+
+    plt.figure()
+    plt.title("Attempts per success")
+    plt.plot(index1, counts1)
+    plt.plot(index2, counts2)
+    plt.figlegend(("Improved", "Original"))
+    plt.xlabel("Steps")
+    plt.ylabel("Attempts/success")
+    plt.show()
 
 
 if __name__ == "__main__" :
     #Exercise_a()
-    Exercise_b()
+    #Exercise_b()
+    #Exercise_c()
+    Exercise_d()
