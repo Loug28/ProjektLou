@@ -39,9 +39,13 @@ class Cars:
             self.c.append(i)        # the color of the cars (for drawing)
 
     def distance(self, i):
-        
+        # Om bil x2 - x1 > 0 så måste man kolla på distansen framför mellan X2 och X1 D2 (Eftersom periodisk)
+        # Om bil x2-x1 < 0 så måste man kolla på distansen mellan X1 och X2 D1
         # TODO: Implement the function returning the PERIODIC distance 
-        # between car i and the one in front 
+        # between car i and the one in front
+        distance = (self.x[(i+1)%self.numCars] - self.x[i]) % self.roadLength
+        return distance
+
 
 
 class Observables:
@@ -102,12 +106,21 @@ class MyPropagator(BasePropagator) :
 
     def timestep(self, cars, obs):
         # TODO Here you should implement the car behaviour rules
-        for i in len(cars.v):
+        for i in range(cars.numCars):
             if cars.v[i] < self.vmax:
                 cars.v[i] = cars.v[i] + 1
-            if cars.v[i] >= cars.distance(i):
-                cars.v[i] = cars.distance(i) - 1
-            if cars.v[i] > 0:
+
+        for j in range(cars.numCars):
+            if cars.v[j] >= cars.distance(j):
+                cars.v[j] = cars.distance(j) - 1
+
+        for k in range(cars.numCars):
+            if np.random.rand() <= self.p  and cars.v[k] > 0:
+                cars.v[k] = cars.v[k] - 1
+
+        for l in range(cars.numCars):
+            cars.x[l] += cars.v[l]
+            cars.x[l] %= cars.roadLength
 
 
 
@@ -122,6 +135,7 @@ def draw_cars(cars, cars_drawing):
     for position in cars.x:
         # Convert to radians for plotting  only (do not use radians for the simulation!)
         theta.append(position * 2 * math.pi / cars.roadLength)
+        #theta.append(position / cars.roadLength)
         r.append(1)
 
     return cars_drawing.scatter(theta, r, c=cars.c, cmap='hsv')
@@ -188,7 +202,7 @@ class Simulation:
 
         # If you experience problems visualizing the animation and/or
         # the following figures comment out the next line 
-        # plt.waitforbuttonpress(30)
+        #plt.waitforbuttonpress(30)
 
         self.plot_observables(title)
     
@@ -206,7 +220,7 @@ def main() :
     # Create the simulation object for your cars instance:
     simulation = Simulation(cars)
 
-    # simulation.run_animate(propagator=ConstantPropagator())
+    #simulation.run_animate(propagator=ConstantPropagator())
     simulation.run_animate(propagator=MyPropagator(vmax=2, p=0.5))
 
 
