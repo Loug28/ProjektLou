@@ -122,6 +122,10 @@ class MyPropagator(BasePropagator) :
             cars.x[l] += cars.v[l]
             cars.x[l] %= cars.roadLength
 
+        flowrate = np.sum(cars.v) / cars.roadLength
+        cars.t += 1
+        return flowrate
+
 
 
 ############################################################################################
@@ -215,7 +219,7 @@ def main() :
     # and pass them to the simulator 
 
     # Be sure you are passing the correct initial conditions!
-    cars = Cars(numCars = 5, roadLength=50)
+    cars = Cars(numCars = 10, roadLength=50)
 
     # Create the simulation object for your cars instance:
     simulation = Simulation(cars)
