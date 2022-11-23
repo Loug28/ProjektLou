@@ -171,10 +171,10 @@ def Exercise_d():
                 x_value += 1
 
             if value == 1:
-                x_value -= 1
+                y_value += 1
 
             if value == 2:
-                y_value += 1
+                x_value -= 1
 
             if value == 3:
                 y_value -= 1
@@ -185,7 +185,7 @@ def Exercise_d():
                 return None
 
             if not_backfire:
-                newDir = int(np.random.rand() * 3)
+                newDir = np.ceil(np.random.rand() * 3)
                 value = (value - 2 + newDir) % 4
             else:
                 value = int(np.random.rand() * 4)
@@ -205,9 +205,9 @@ def Exercise_d():
                 return val, stepsRun
             stepsRun += 1
 
-    for i in range(5, 55, 5):
+    for i in range(5, 45, 5):
         plt.figure()
-        plt.title("{0} non-intersecting steps".format(i))
+        plt.title("Number of steps not intersecting: {0} ".format(i))
         (X, Y, index), stepsRun = runUntilWorks(i, True)
         plt.plot(X, Y)
         plt.show()
@@ -237,7 +237,7 @@ def Exercise_d():
     plt.title("Success")
     plt.plot(index1, means1)
     plt.plot(index2, means2)
-    plt.figlegend(("Improved", "Original"))
+    plt.figlegend(("Improved: Moves in 3 directions", "Original: Moves in 4 directions"))
     plt.xlabel("Steps")
     plt.ylabel("Success ratio")
     plt.show()
@@ -246,7 +246,7 @@ def Exercise_d():
     plt.title("Attempts per success")
     plt.plot(index1, counts1)
     plt.plot(index2, counts2)
-    plt.figlegend(("Improved", "Original"))
+    plt.figlegend(("Improved: Moves in 3 directions", "Original: Moves in 4 directions"))
     plt.xlabel("Steps")
     plt.ylabel("Attempts/success")
     plt.show()
@@ -355,11 +355,11 @@ def Exercise_e():
         plt.figure()
         plt.title("Log-log distance comparison")
         plt.plot([np.log1p(i) for i in length],
-                [np.log1p(i) for i in R2_intersecting], label = "Intersecting")
+                [np.log1p(i) for i in R2_intersecting], label = "Normal random walk")
         plt.plot([np.log1p(i) for i in length],
-                [np.log1p(i) for i in R2_non_intersecting], label = "Non-intersecting")
+                [np.log1p(i) for i in R2_non_intersecting], label = "Self-avoiding random walk")
         plt.xlabel('ln(N): Steps')
-        plt.ylabel('$ln(\sqrt{⟨R^2⟩})$')
+        plt.ylabel('$ln\sqrt{⟨R^2⟩}$')
         plt.legend() 
         plt.show()
         
