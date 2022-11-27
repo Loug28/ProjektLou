@@ -188,7 +188,7 @@ class Simulation:
     # Run while displaying the animation of bunch of cars going in circe (slow-ish)
     def run_animate(self,
             propagator,
-            numsteps=200,           # Final time
+            numsteps=200,           # Final time 
             stepsperframe=1,        # How many integration steps between visualising frames
             title="simulation",     # Name of output file and title shown at the top
             ):
@@ -209,7 +209,147 @@ class Simulation:
         #plt.waitforbuttonpress(30)
 
         self.plot_observables(title)
+
+
+#Assignment 2.2 a)
+########################################################################################
+flowratearr = []
+densityarr = []
+numOfSim = 1000
+numOfSteps = 100
+roadlen = 50
+rangeStart = 0
+rangeUpperLimit = 50
+rangeStepSize = 2
+
+def fund_calc():
+    for numOfCars in range(rangeStart, rangeUpperLimit, rangeStepSize):
+        flowrateArr_numOfCars = []
+        for sim in range(numOfSim):
+            cars = Cars(numCars=numOfCars, roadLength=roadlen)
+            obs = Observables()
+            propagator = MyPropagator(vmax=2, p=0.5)
+            for it in range(numOfSteps):
+                propagator.propagate(cars, obs)
+            flowrateArr_numOfCars.append(np.sum(obs.flowrate)/numOfSteps)
+        frcheck = np.sum(flowrateArr_numOfCars)/numOfSim
+        print(str(frcheck) + "\n")
+        flowratearr.append(frcheck)
+        densityarr.append(numOfCars/roadlen)
+        print ("Done with simulation for " + str (numOfCars) + " number of cars")
+
+def plot_fund():
+    plt.clf
+    plt.title("Fundamental diagram")
+    plt.xlabel("Density")
+    plt.ylabel("Flow rate")
+    plt.plot(densityarr, flowratearr) 
+    plt.savefig("Fundamental.pdf")
+    plt.show()
+
+
+#Assignment 2.2 b)
+######################################################################
+meanFlowrate = []
+error = []
+numIter = 1
+
+def stat_acc_round():
+    global numIter
+    while True:
+        frArr = []
+        for it in range(1, numIter, 1):
+            cars = Cars(numCars=25, roadLength=50)
+            obs = Observables()
+            propagator = MyPropagator(vmax=2, p=0.5)
+            for it in range(100):
+                propagator.propagate(cars, obs)
+            frArr.append(obs.flowrate)
+        mean = np.mean(frArr)
+        print (str(mean) + "\n")
+        sem = mean / np.sqrt(np.size(frArr))
+        print (str(sem) + "\n")
+        error.append(sem)
+        numIter += 1
+        if round(sem, 3) <= 0.001:
+            break
+        
+def stat_acc():
+    global numIter
+    while True:
+        frArr = []
+        for it in range(1, numIter, 1):
+            cars = Cars(numCars=25, roadLength=50)
+            obs = Observables()
+            propagator = MyPropagator(vmax=2, p=0.5)
+            for it in range(100):
+                propagator.propagate(cars, obs)
+            frArr.append(obs.flowrate)
+        mean = np.mean(frArr)
+        print (str(mean) + "\n")
+        sem = mean / np.sqrt(np.size(frArr))
+        print (str(sem) + "\n")
+        error.append(sem)
+        numIter += 1
+        if sem <= 0.001:
+            break
+
+def stat_plot():
+    plt.clf
+    plt.title("Statistical accuracy")
+    plt.xlabel("Number of simulations")
+    plt.ylabel("Standard errors of mean")
+    plt.plot(range(1, numIter, 1), error)
+    plt.show()
     
+
+
+#Assignment 2.2 c)
+#######################################################################
+
+roadLenArr = []
+numSteps = 100
+rStart = 10
+rUpperLimit = 150
+rIncrease = 20
+densityUpper = 100
+denArr = []
+
+def independent_check():
+
+    
+    for length in range(rStart, rUpperLimit, rIncrease):
+        denArr.clear()
+        frLengthArr = []
+        for den in range(0, densityUpper, 1):
+            density = den / densityUpper
+            savedfr = []
+            for sim in range(numOfSim):
+                cars = Cars(numCars=round(length*density), roadLength=length)
+                obs = Observables()
+                propagator = MyPropagator(vmax=2, p=0.5)
+                for it in range(numSteps):
+                    propagator.propagate(cars, obs)
+                savedfr.append(np.sum(obs.flowrate)/numOfSteps)
+            frcheck = np.sum(savedfr) / numOfSim
+            print(str(frcheck) + "\n")
+            frLengthArr.append(frcheck)
+            denArr.append(density)
+            print(str(density) + "\n")
+        roadLenArr.append(frLengthArr)
+
+
+            
+
+
+def independent_plot():
+    plt.clf()
+    plt.xlabel("Density")
+    plt.ylabel("Flow rate")
+    plt.title("Fundamental diagram")
+    for it in range(len(roadLenArr)):
+        plt.plot(denArr, roadLenArr[it])
+    plt.show()
 
 # It's good practice to encapsulate the script execution in 
 # a main() function (e.g. for profiling reasons)
@@ -226,6 +366,22 @@ def main() :
 
     #simulation.run_animate(propagator=ConstantPropagator())
     simulation.run_animate(propagator=MyPropagator(vmax=2, p=0.5))
+
+#Assignment 2.2 a)
+    #fund_calc()
+    #plot_fund()
+
+#Assignment 2.2 b)
+    #stat_acc_round()
+    #stat_plot()
+
+#Assignment 2.2 c)
+    independent_check()
+    independent_plot()
+
+
+
+
 
 
 # Calling 'main()' if the script is executed.
