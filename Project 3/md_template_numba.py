@@ -151,7 +151,6 @@ class MDsimulator:
         # When using a thermostat, modify the velocities of all particles here.
         # Note that you can use thermalize() from md_force_calculator.py.
         md.thermalize(self.vx, self.vy, np.sqrt(self.kBT))
-                
 
         for i in range(0,self.n):
             # At the first step we alread have the "full step" velocity
@@ -258,13 +257,14 @@ class MDsimulator:
         # You may want to (un)comment the following 'waitforbuttonpress', depending on your environment
         # plt.waitforbuttonpress(timeout=20)
 
-    def plot_energy(self, title="energies") :
+    def plot_energy(self, title=("Energies")) :
         
         """
             Plots kinetic, potential and total energy over time
         """
         
         plt.figure()
+        plt.title(title)
         plt.xlabel('time')
         plt.ylabel('energy')
         plt.plot(self.outt, self.ekinList, self.outt, self.epotList, self.outt, self.etotList)
@@ -276,8 +276,12 @@ class MDsimulator:
 # It's good practice to encapsulate the script execution in 
 # a main() function (e.g. for profiling reasons)
 def exercise_32a() :
-    sim32 = MDsimulator()
-    sim32.simulate_animate
+    timesteps = [0.014, 0.0142]
+    for dt in timesteps:
+        for i in range(5):
+            sim = MDsimulator(dt=dt)
+            sim.simulate()
+            sim.plot_energy(title='Timestep dt = ' + str(dt))
 
 
 # Calling 'main()' if the script is executed.

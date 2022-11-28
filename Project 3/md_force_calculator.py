@@ -44,8 +44,7 @@ def pairEnergy(r):
 def pairForce(r):
     # TODO
     # Implement the pair force calculation here!
-
-    return ### FORCE ###
+    return -4*LJ_epsilon*((-12/r)*((LJ_sigma/r)**12) + (6/r)*((LJ_sigma/r)**6))
 
 # Calculate the shortest periodic distance, unit cell [0,Lx],[0,Ly]
 # Returns the difference along x, along y and the distance
