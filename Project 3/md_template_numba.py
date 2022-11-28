@@ -51,7 +51,7 @@ class MDsimulator:
         mass = 1.0, 
         numPerRow = 8, 
         initial_spacing = 1.12,
-        T = 0.4, 
+        T = 1, 
         dt = 0.01, 
         nsteps = 20000, 
         numStepsPerFrame = 100,
@@ -150,6 +150,8 @@ class MDsimulator:
         # TODO
         # When using a thermostat, modify the velocities of all particles here.
         # Note that you can use thermalize() from md_force_calculator.py.
+        md.thermalize(self.vx, self.vy, np.sqrt(self.kBT))
+                
 
         for i in range(0,self.n):
             # At the first step we alread have the "full step" velocity
@@ -274,12 +276,12 @@ class MDsimulator:
 # It's good practice to encapsulate the script execution in 
 # a main() function (e.g. for profiling reasons)
 def exercise_32a() :
-    # ...
+    sim32 = MDsimulator()
+    sim32.simulate_animate
 
 
 # Calling 'main()' if the script is executed.
 # If the script is instead just imported, main is not called (this can be useful if you want to
 # write another script importing and utilizing the functions and classes defined in this one)
 if __name__ == "__main__" :
-
     exercise_32a()
