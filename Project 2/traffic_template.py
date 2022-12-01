@@ -240,7 +240,7 @@ def fund_calc():
 
 def plot_fund():
     plt.clf
-    plt.title("Fundamental diagram")
+    plt.title("Fundamental diagram, v_max = 2, p = 0.5")
     plt.xlabel("Density")
     plt.ylabel("Flow rate")
     plt.plot(densityarr, flowratearr) 
@@ -315,9 +315,7 @@ rIncrease = 20
 densityUpper = 100
 denArr = []
 
-def independent_check():
-
-    
+def independent_check(): 
     for length in range(rStart, rUpperLimit, rIncrease):
         denArr.clear()
         frLengthArr = []
@@ -339,9 +337,6 @@ def independent_check():
         roadLenArr.append(frLengthArr)
 
 
-            
-
-
 def independent_plot():
     plt.clf()
     plt.xlabel("Density")
@@ -350,6 +345,10 @@ def independent_plot():
     for it in range(len(roadLenArr)):
         plt.plot(denArr, roadLenArr[it])
     plt.show()
+
+def calculate_standard_error_estimate(lst):
+    std = np.std(lst)
+    return std/len(lst)
 
 # It's good practice to encapsulate the script execution in 
 # a main() function (e.g. for profiling reasons)
@@ -376,12 +375,8 @@ def main() :
     #stat_plot()
 
 #Assignment 2.2 c)
-    independent_check()
-    independent_plot()
-
-
-
-
+    #independent_check()
+    #independent_plot()
 
 
 # Calling 'main()' if the script is executed.

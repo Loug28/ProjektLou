@@ -37,14 +37,16 @@ def thermalize(vx, vy, sqrtKineticEnergyPerParticle):
 def pairEnergy(r):
     # TODO
     # Implement the pair energy calculation here!
-    return 4 * LJ_epsilon * ((LJ_sigma / r) ** 12 - (LJ_sigma / r) ** 6)
+    V = 4*LJ_epsilon*((LJ_sigma/r)**12-(LJ_sigma/r)**6)
+    return V
 
 # The pair force
 @nmb.jit(nopython=True)    
 def pairForce(r):
     # TODO
     # Implement the pair force calculation here!
-    return -4*LJ_epsilon*((-12/r)*((LJ_sigma/r)**12) + (6/r)*((LJ_sigma/r)**6))
+    F = -4*LJ_epsilon*((-12/r)*((LJ_sigma/r)**12) + (6/r)*((LJ_sigma/r)**6))
+    return F
 
 # Calculate the shortest periodic distance, unit cell [0,Lx],[0,Ly]
 # Returns the difference along x, along y and the distance

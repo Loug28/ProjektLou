@@ -276,12 +276,28 @@ class MDsimulator:
 # It's good practice to encapsulate the script execution in 
 # a main() function (e.g. for profiling reasons)
 def exercise_32a() :
-    timesteps = [0.014, 0.0142]
+    timesteps = [0.032, 0.034]
+    simulations = {}
     for dt in timesteps:
         for i in range(5):
             sim = MDsimulator(dt=dt)
             sim.simulate()
             sim.plot_energy(title='Timestep dt = ' + str(dt))
+    
+    '''
+    simulator = MDsimulator()
+    simulator.simulate()
+    plt.figure()
+    fig, ax = plt.subplots(1,1)
+    ax.plot(simulator.outt, simulator.etotList)
+    ax.tick_params(axis='both', which='major')
+    plt.title('Energy drift')
+    plt.xlabel('Time')
+    plt.ylabel('Total energy')
+    ax.yaxis.get_offset_text().set_fontsize(12)
+    print(simulator.etotList)
+    plt.show()
+    '''
 
 
 # Calling 'main()' if the script is executed.
