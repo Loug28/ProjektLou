@@ -371,12 +371,12 @@ def main() :
     #plot_fund()
 
 #Assignment 2.2 b)
-    #stat_acc_round()
+    #stat_acc()
     #stat_plot()
 
 #Assignment 2.2 c)
-    #independent_check()
-    #independent_plot()
+    independent_check()
+    independent_plot()
 
 
 # Calling 'main()' if the script is executed.
