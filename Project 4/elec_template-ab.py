@@ -19,6 +19,7 @@ v_exact = 10
 # Initialize the grid to 0
 # 10% lower potential 
 v = np.ones((n+1, n+1)) * 9
+vold = np.zeros((n+1, n+1)) * 9
 vnew = np.zeros((n+1, n+1)) * 9
 
 # 4.1b
@@ -55,7 +56,7 @@ def relax(n, v, checker):
                     
                     error = abs(v_exact - v[x,y])
                     error_array.append(error)
-        error_max_array.append(max(error_array))
+        #error_max_array.append(max(error_array))
 
         # Copy back the new values to v
         # Note that you can directly store in v instead of vnew with Gauss-Seidel or checkerboard
@@ -63,6 +64,23 @@ def relax(n, v, checker):
         #    for y in range(1,n):
         #        if (x*(n+1) + y) % checker == check:
         #            v[x,y] = vnew[x,y]
+
+        error_array = []
+        for x in range(1,n):
+            for y in range(1,n):
+                if (x*(n+1) + y) % checker == check:
+                    v[x,y] = vnew[x,y]
+
+                    # Check 1% accuracy
+                    error = abs(v[x,y]-vold[x,y])
+
+                    average = (1/4) * (v[x+1, y] + v[x-1, y] + v[x, y+1] + v[x, y-1])
+                    error = abs(average - v[x,y])
+                    print("error:", error)
+                    if error > maximumerror:
+                        maximumerror = error
+                        print("max:", maximumerror)
+        error_max_array.append(maximumerror)
         
 
 def update(step):
