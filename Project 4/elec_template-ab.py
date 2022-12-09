@@ -65,7 +65,7 @@ def relax(n, v, checker):
         #        if (x*(n+1) + y) % checker == check:
         #            v[x,y] = vnew[x,y]
 
-        error_array = []
+        '''error_array = []
         for x in range(1,n):
             for y in range(1,n):
                 if (x*(n+1) + y) % checker == check:
@@ -80,7 +80,7 @@ def relax(n, v, checker):
                     if error > maximumerror:
                         maximumerror = error
                         print("max:", maximumerror)
-        error_max_array.append(maximumerror)
+        error_max_array.append(maximumerror)'''
         
 
 def update(step):

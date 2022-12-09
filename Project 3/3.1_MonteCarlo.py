@@ -38,10 +38,10 @@ class MonteCarlo:
 
 
 def result_v_deltas():
-    deltas = np.linspace(0.01, 10, 1000)
+    deltas = np.linspace(0.01, 10, 100)
     results = []
     for delta in deltas:
-        x = MonteCarlo(delta=delta, Nsteps=30000, N0=1000)
+        x = MonteCarlo(delta=delta, Nsteps=10000, N0=1000)
         x.calc_x()
         results.append(x.result)
     plt.plot(deltas, results, '.-')
@@ -51,7 +51,7 @@ def result_v_deltas():
     plt.show()
 
 def SE_of_the_mean():
-    deltas = np.linspace(0.01, 10, 1000)
+    deltas = np.linspace(0.01, 10, 100)
     errors = np.zeros(1000)
     for delta in deltas:
         print(str(delta))
@@ -68,7 +68,7 @@ def SE_of_the_mean():
     plt.plot(deltas, errors)
     plt.xlabel('delta')
     plt.ylabel('SE of the mean')
-    plt.title('SE vs delta, N = 100')
+    plt.title('SE vs delta')
     plt.show()
 
 
