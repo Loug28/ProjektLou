@@ -6,13 +6,13 @@ from scipy.ndimage import gaussian_filter1d
 L = 10
 
 # The grid is n+1 points along x and y, including boundary points 0 and n
-n = 20
+n = 10
 
 # The grid spacing is L/n
 
 # The number of iterations
 nsteps = 10
-nsteps_list = range(1,500)
+nsteps_list = range(1,100)
 error_max_array = []        # should have the same size as nsteps_list
 v_exact = 10
 
@@ -33,8 +33,8 @@ for i in v:
 for i in range(1,n):
     v[0,i] = 10
     v[n,i] = 10
-    v[i,0] = 5
-    v[i,n] = 5
+    v[i,0] = 10
+    v[i,n] = 10
 
 #fig = plt.figure()
 #ax = fig.add_subplot(111)
@@ -42,7 +42,7 @@ for i in range(1,n):
 #fig.colorbar(im)
 
 # checker=1: no checkboard, checker=2: checkerboard (note: n should be even)
-checker = 2
+checker = 1
 
 # perform one step of relaxation
 def relax(n, v, checker):
@@ -56,7 +56,7 @@ def relax(n, v, checker):
                     
                     error = abs(v_exact - v[x,y])
                     error_array.append(error)
-        #error_max_array.append(max(error_array))
+        error_max_array.append(max(error_array))
 
         # Copy back the new values to v
         # Note that you can directly store in v instead of vnew with Gauss-Seidel or checkerboard
@@ -100,16 +100,16 @@ def E4_1a():
     for step in nsteps_list:
         update(step)
     
-    new = error_max_array[:len(error_max_array)//2]
+    new = error_max_array[:len(error_max_array)]
     print(len(new))
     newsmooth = gaussian_filter1d(new, sigma=0.9)
 
     plt.figure(1)
     plt.title("Number of iterations to achive 1% accuracy")
     plt.xlabel("Number of iterations")
-    plt.ylabel("Accuracy")
+    plt.ylabel("Max error")
     plt.plot(nsteps_list, newsmooth, "g", label="Grid size: "+ str(L/n))
-    plt.plot(nsteps_list, [0.1]*len(nsteps_list), 'r', label="1%")
+    plt.plot(nsteps_list, [0.01]*len(nsteps_list), 'r', label="1%")
     plt.legend()
     plt.show()
 

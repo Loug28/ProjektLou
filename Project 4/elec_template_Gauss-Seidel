@@ -12,7 +12,7 @@ n = [10,20]
 
 # The number of iterations
 #nsteps = 10
-nsteps = [29, 113]
+nsteps = [150,150]
 error_max = []
 V_exact = 10
 
@@ -20,35 +20,39 @@ for nsteps, n_1 in zip(nsteps, n):
     start_time = time.time()
 
     # Initialize the grid to 0
-    v = np.ones((n+1, n+1)) * 9
+    v = np.ones((n_1+1, n_1+1)) * 9
     #vnew = np.zeros((n+1, n+1)) 
 
     # Set the boundary conditions
-    for i in range(1,n):
+    for i in range(1,n_1):
         v[0,i] = 10
-        v[n,i] = 10
+        v[n_1,i] = 10
         v[i,0] = 10
-        v[i,n] = 10
+        v[i,n_1] = 10
 
-    fig = plt.figure()
+    """  fig = plt.figure()
     ax = fig.add_subplot(111)
     im = ax.imshow(v, cmap=None, interpolation='nearest')
-    fig.colorbar(im)
+    fig.colorbar(im) """
 
     # checker=1: no checkboard, checker=2: checkerboard (note: n should be even)
-    checker = 2
+    checker = 1
+    end_time = 0
 
     # perform one step of relaxation
-    error_array = []
+
     def relax(n, v, checker):
+        error_array = []
         for check in range(0,checker):
-            for x in range(1,n):
-                for y in range(1,n):
-                    if (x*(n+1) + y) % checker == check:
+            for x in range(1,n_1):
+                for y in range(1,n_1):
+                    if (x*(n_1+1) + y) % checker == check:
                         v[x,y] = (v[x-1][y] + v[x+1][y] + v[x][y-1] + v[x][y+1])*0.25
                         error = abs(V_exact-v[x,y])
                     error_array.append(error)
-        error_max.append(max(error_array))
+        maxi = max(error_array)
+        print(str(maxi))
+        error_max.append(maxi)
 
             # Copy back the new values to v
             # Note that you can directly store in v instead of vnew with Gauss-Seidel or checkerboard
@@ -59,46 +63,67 @@ for nsteps, n_1 in zip(nsteps, n):
 
     def update(step):
         print(step)
-        global n, v, checker
+        global n, v, checker, end_time
 
         # FuncAnimation calls update several times with step=0,
         # so we needs to skip the update with step=0 to get
         # the correct number of steps 
         if step > 0:
             relax(n, v, checker)
+            end_time = time.time()
 
-        im.set_array(v)
-        return im,
+        """  im.set_array(v)
+        return im, """
 
-    # we generate nsteps+1 frames, because frame=0 is skipped (see above)
-    anim = animation.FuncAnimation(fig, update, frames=nsteps+1, interval=200, blit=True, repeat=False)
+    """  def exercise_42b():
+        # we generate nsteps+1 frames, because frame=0 is skipped (see above)
+        anim = animation.FuncAnimation(fig, update, frames=nsteps+1, interval=200, blit=True, repeat=False)
+        plt.show()
+
+        # Calculate execution time
+        #end_time = time.time()              # end time
+        ex_time = end_time-start_time
+        print("No. of iterations:", nsteps, "took time:", ex_time) """
+
+def exercise_42a():
+    #step = 1
+    saved_desire = []
+    ## Plotting
+    for step in range(1,210):
+        update(step)
+    """while True:
+        update(step)
+        v_list = v[int(n[0]/2)].tolist()
+        desired = v_list[int(n[0]/2)]
+        print(desired)
+
+            # # Condition to achieve 1% accuracy of the desired potential
+        if desired >= 9.9:
+            print("1 percent accuracy after:", step, "iterations")
+            break   
+        step += 1 
+        saved_desire.append(desired) """
+
+    new = error_max[:len(error_max)]
+    print(len(new))
+    plt.figure(1)
+    plt.title("Accuracy with different grid sizes")
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Max error")
+    plt.plot(range(0,len(new)), new, "b", label="Grid size "+ str(L/n[1]))
+    plt.plot(range(0, len(new)), [0.01]*len(new), 'r', label="1%")
+    plt.legend()
     plt.show()
-
-    # Calculate execution time
-    end_time = time.time()              # end time
-    ex_time = end_time-start_time
-    print("No. of iterations:", nsteps, "took time:", ex_time)
-
-## Plotting
-# new = error_max_list[:len(error_max_list)//2]
-# print(len(new))
-# plt.figure(1)
-# plt.title("Accuracy with different grid sizes")
-# plt.xlabel("Number of iterations")
-# plt.ylabel("Error")
-# plt.plot(nsteps_list, new, "b", label="Grid size "+ str(L/n))
-# plt.plot(nsteps_list, [0.1]*len(nsteps_list), 'r', label="1%")
-# plt.legend()
-# plt.show()
     
     # 10.11a
     # # The center of the matrix represents the desired potential 
-    # v_list = v[int(n/2)].tolist()
-    # desired = v_list[int(n/2)]
-    # print(desired)
+       
 
-    # # Condition to achieve 1% accuracy of the desired potential
-    # if desired >= 9.9:
-    #     print("1 percent accuracy after:", nsteps, "iterations")
-    #     break    
+
+def main():
+    exercise_42a()
+
+
+if __name__ == "__main__" :
+    main()
 
