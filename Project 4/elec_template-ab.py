@@ -11,23 +11,23 @@ n = 10
 # The grid spacing is L/n
 
 # The number of iterations
-nsteps = 10
-nsteps_list = range(1,100)
+#nsteps = 10
+nsteps_list = range(1,300)
 error_max_array = []        # should have the same size as nsteps_list
 v_exact = 10
 
 # Initialize the grid to 0
 # 10% lower potential 
-v = np.ones((n+1, n+1)) * 9
-vold = np.zeros((n+1, n+1)) * 9
-vnew = np.zeros((n+1, n+1)) * 9
+v = np.zeros((n+1, n+1)) * 9
+#vold = np.zeros((n+1, n+1)) * 9
+#vnew = np.zeros((n+1, n+1)) * 9
 
 # 4.1b
 #v = np.ones((n+1, n+1)) * 0
 
-'''# 10.10b
-for i in v:
-    i[5] += 4'''
+# 10.10b
+#for i in v:
+#    i[5] += 4
 
 # Set the boundary conditions
 for i in range(1,n):
@@ -109,7 +109,7 @@ def E4_1a():
     plt.xlabel("Number of iterations")
     plt.ylabel("Max error")
     plt.plot(nsteps_list, newsmooth, "g", label="Grid size: "+ str(L/n))
-    plt.plot(nsteps_list, [0.01]*len(nsteps_list), 'r', label="1%")
+    plt.plot(nsteps_list, [0.1]*len(nsteps_list), 'r', label="1%")
     plt.legend()
     plt.show()
 
