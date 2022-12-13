@@ -67,8 +67,8 @@ def find_potential(n=10,nwalks=200):
         boundary[i,0] = 5
         boundary[i,n] = 5
     # Set the the boundary position that maximizes the potential at [3, 5] to 20
-    #boundary[3,0] = boundary[4,0] = boundary[5,0] = boundary[6,0] = boundary[7,0] = 20
-    boundary[0,3] = boundary[0,4] = boundary[0,5] = boundary[0,6] = boundary[0,7] = 20
+    boundary[3,0] = boundary[4,0] = boundary[5,0] = boundary[6,0] = boundary[7,0] = 20
+    #boundary[0,3] = boundary[0,4] = boundary[0,5] = boundary[0,6] = boundary[0,7] = 20
     
     v = np.copy(boundary)      # Store potential for all positions
 
@@ -84,7 +84,7 @@ def find_potential(n=10,nwalks=200):
     
     # v is now computed for all locations and can be plotted
     fig = plt.figure()
-    plt.title('Maximized potential for [5,3]', fontsize = 18)
+    plt.title('Maximized potential for [3,5]')
     im = plt.imshow(v, cmap=None, interpolation='nearest')
     cb = fig.colorbar(im)
     cb.ax.tick_params(labelsize=14)
@@ -98,7 +98,7 @@ def plot_Greens_function(n=10, nwalks=500, position=[5,5]):
     G /= nwalks
        
     fig = plt.figure()
-    plt.title("Green's function for " + str(position), fontsize = 18)
+    plt.title("Green's function for " + str(position))
     im = plt.imshow(G, cmap=None, interpolation='nearest')
     cb = fig.colorbar(im)
     cb.ax.tick_params(labelsize=14)
@@ -107,11 +107,11 @@ def plot_Greens_function(n=10, nwalks=500, position=[5,5]):
 
 # 10.18 a) ===================================================================
 
-#plot_Greens_function(n=10, nwalks=10000, position=[5,5])
-#plot_Greens_function(n=10, nwalks=10000, position=[3,5])
-#plot_Greens_function(n=10, nwalks=10000, position=[5,3])
+'''plot_Greens_function(n=10, nwalks=10000, position=[5,5])
+plot_Greens_function(n=10, nwalks=10000, position=[3,5])
+plot_Greens_function(n=10, nwalks=10000, position=[5,3])'''
   
 # 10.18 b) ===================================================================  
 # Change the positions with potential 20 in order to maxizime the potential 
 # for various positions
-#find_potential(n=10, nwalks=1000)
+find_potential(n=10, nwalks=1000)

@@ -16,7 +16,7 @@ tolerance = 0.000001
 
 Nlist = [10, 100, 250, 500, 1000, 2500, 5000, 7500, 10000]
 x = 5
-y = 1
+y = 6
 V = 0
 
 # ------------------------- Define functions
@@ -133,8 +133,8 @@ def calculate2():
     plt.legend(['Random-walk solution',
                 'Relaxation method convergence: V ≈ ' + str(round(v[x,y],1)),
                 'Random walk convergence:  V ≈ ' + str(round(walk(Nlist[-1]),1))])
-    plt.xlabel('Walkers (n)', fontsize = 18)
-    plt.ylabel('Potential (V)', fontsize = 18)
+    plt.xlabel('Walkers (n)')
+    plt.ylabel('Potential (V)')
     plt.show()
 
     plt.figure()
@@ -143,8 +143,8 @@ def calculate2():
               fontsize = 18)
     plt.plot(Nlist, errorlist, marker = '.',
              color = 'tab:green', markersize = 10)
-    plt.xlabel('Walkers (n)', fontsize = 18)
-    plt.ylabel('SEM', fontsize = 18)
+    plt.xlabel('Walkers (n)')
+    plt.ylabel('SEM')
     plt.show()
 
 initiateVMatrices()
