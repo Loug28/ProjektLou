@@ -314,12 +314,13 @@ rUpperLimit = 150
 rIncrease = 20
 densityUpper = 100
 denArr = []
+rangeArr = [5, 10, 25, 50, 80, 100, 150]
 
 def independent_check(): 
-    for length in range(rStart, rUpperLimit, rIncrease):
+    for length in rangeArr:
         denArr.clear()
         frLengthArr = []
-        for den in range(0, densityUpper, 1):
+        for den in range(0, densityUpper, 2):
             density = den / densityUpper
             savedfr = []
             for sim in range(numOfSim):
@@ -328,7 +329,8 @@ def independent_check():
                 propagator = MyPropagator(vmax=2, p=0.5)
                 for it in range(numSteps):
                     propagator.propagate(cars, obs)
-                savedfr.append(np.sum(obs.flowrate)/numOfSteps)
+                saving = np.sum(obs.flowrate)/numOfSteps
+                savedfr.append(saving if saving > 0 else 0)
             frcheck = np.sum(savedfr) / numOfSim
             print(str(frcheck) + "\n")
             frLengthArr.append(frcheck)
@@ -342,8 +344,14 @@ def independent_plot():
     plt.xlabel("Density")
     plt.ylabel("Flow rate")
     plt.title("Fundamental diagram")
-    for it in range(len(roadLenArr)):
-        plt.plot(denArr, roadLenArr[it])
+    plt.plot(denArr, roadLenArr[0], label="5")
+    plt.plot(denArr, roadLenArr[1], label="10")
+    plt.plot(denArr, roadLenArr[2], label="25")
+    plt.plot(denArr, roadLenArr[3], label="50")
+    plt.plot(denArr, roadLenArr[4], label="80")
+    plt.plot(denArr, roadLenArr[5], label="100")
+    plt.plot(denArr, roadLenArr[6], label="150")
+    plt.legend()
     plt.show()
 
 def calculate_standard_error_estimate(lst):

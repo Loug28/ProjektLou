@@ -199,7 +199,7 @@ def main_2e():
 
 # main_test()
 # main_2a()
-main_2b() # Need around 150 attempts for eqtime = 20%
-# main_2c()
+#main_2b() # Need around 150 attempts for eqtime = 20%
+main_2c()
 # main_2d()
 # main_2e()
