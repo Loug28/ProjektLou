@@ -36,9 +36,9 @@ class MonteCarlo:
                 self.x[i] = (xi)
         self.result = np.sum(self.x[self.N0:]) / (self.Nsteps - self.N0)
 
-
+steps = 200
 def result_v_deltas():
-    deltas = np.linspace(0.01, 10, 100)
+    deltas = np.linspace(0.01, 10, steps)
     results = []
     for delta in deltas:
         x = MonteCarlo(delta=delta, Nsteps=10000, N0=1000)
@@ -51,8 +51,10 @@ def result_v_deltas():
     plt.show()
 
 def SE_of_the_mean():
-    deltas = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
-    errors = np.zeros(10)
+    deltas = np.linspace(0.01, 10, steps)
+    errors = np.zeros(steps)
+    ActualDiff = np.zeros(steps)
+    io = 0
     for delta in deltas:
         print(str(delta))
         error = []
@@ -60,19 +62,24 @@ def SE_of_the_mean():
             x = MonteCarlo(delta=delta, Nsteps=10000, N0=1000)
             x.calc_x()
             error.append(x.result)
-        errors[deltas.index(delta)] = np.std(error) / 10 #10 is the square root of 100 and as we use N = 100 here with the range we will divide by 10
+        errors[io] = np.std(error) / 10 #10 is the square root of 100 and as we use N = 100 here with the range we will divide by 10
+        ActualDiff[io] = errors[io] ** 0.5 / delta
+        io += 1
 
     #plot the results
     #######################################################################'
     plt.clf()
-    plt.plot(deltas, errors)
+    plt.plot(deltas, errors, label = "sigma/sqrt(N)")
+    plt.plot(deltas, ActualDiff, label = "sqrt(sigma)/delta")
+    plt.legend()
     plt.xlabel('delta')
-    plt.ylabel('SE of the mean')
-    plt.title('SE vs delta')
+    plt.ylabel('Exact value')
+    #plt.title('SE vs delta')
     plt.show()
 
 
 def main():
+    #result_v_deltas()
     SE_of_the_mean()
 
 if __name__ == "__main__" :
