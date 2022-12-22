@@ -51,8 +51,8 @@ def result_v_deltas():
     plt.show()
 
 def SE_of_the_mean():
-    deltas = np.linspace(0.01, 10, 100)
-    errors = np.zeros(1000)
+    deltas = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+    errors = np.zeros(10)
     for delta in deltas:
         print(str(delta))
         error = []
@@ -60,7 +60,7 @@ def SE_of_the_mean():
             x = MonteCarlo(delta=delta, Nsteps=10000, N0=1000)
             x.calc_x()
             error.append(x.result)
-        errors[int(delta * 100) - 1] = np.std(error) / 10 #10 is the square root of 100 and as we use N = 100 here with the range we will divide by 10
+        errors[deltas.index(delta)] = np.std(error) / 10 #10 is the square root of 100 and as we use N = 100 here with the range we will divide by 10
 
     #plot the results
     #######################################################################'
